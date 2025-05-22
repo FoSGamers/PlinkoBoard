@@ -1,3 +1,5 @@
+![CI](https://github.com/FoSGamers/PlinkoBoard/actions/workflows/python-app.yml/badge.svg)
+
 # PlinkoBoard (FoSGamers Edition)
 
 A customizable, animated Plinko board app for giveaways, OBS overlays, and gaming streams.
@@ -19,6 +21,11 @@ A customizable, animated Plinko board app for giveaways, OBS overlays, and gamin
    python main.py
    ```
 
+## Continuous Integration (CI)
+- This project uses GitHub Actions for CI/testing.
+- All tests must pass on every push and pull request before merging.
+- See `.github/workflows/python-app.yml` for details.
+
 ## Project Structure
 ```
 Plinko/
@@ -37,6 +44,7 @@ Plinko/
 
 ## Development & Contribution
 - Follow best practices: commit after every change, add/maintain tests, never break existing features.
+- All projects must have CI/testing via GitHub Actions, running on every push and PR, with all tests passing before merge.
 - See `tests/` for test examples.
 
 ---
