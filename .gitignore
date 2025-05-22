@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
+*.swp
+assets/*.wav
+!assets/.gitkeep
+config/*.json
+!config/rewards_template.json
+.env
+.idea/
+.vscode/ 
