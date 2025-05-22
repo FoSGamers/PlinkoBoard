@@ -2,7 +2,7 @@ import sys
 import json
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QPushButton, QLabel,
-    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox, QColorDialog
+    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox, QColorDialog, QSizePolicy
 )
 from PySide6.QtCore import Qt
 from plinko_board import PlinkoBoard
@@ -11,7 +11,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("FoSGamers PlinkoBoard")
-        self.setFixedSize(620, 1000)
+        self.resize(800, 1100)
+        self.setMinimumSize(400, 600)
 
         self.reward_labels = [
             "+5 POGs", "+10 POGs", "Vault Key", "Whiskey", "Loot Crate",
@@ -19,25 +20,32 @@ class MainWindow(QMainWindow):
         ]
 
         self.board = PlinkoBoard(self.reward_labels, parent=self)
+        self.board.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.result_label = QLabel("Drop a chip to play!")
         self.result_label.setAlignment(Qt.AlignCenter)
+        self.result_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.player_input = QLineEdit()
         self.player_input.setPlaceholderText("Enter player name")
+        self.player_input.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.color_button = QPushButton("Pick Chip Color")
         self.color_button.clicked.connect(self.pick_color)
+        self.color_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.chip_color = "red"
 
         self.drop_button = QPushButton("Drop Chip")
         self.drop_button.clicked.connect(self.handle_drop)
+        self.drop_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.save_button = QPushButton("Save Rewards Template")
         self.save_button.clicked.connect(self.save_template)
+        self.save_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.load_button = QPushButton("Load Rewards Template")
         self.load_button.clicked.connect(self.load_template)
+        self.load_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.drop_button)
@@ -45,7 +53,7 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(self.load_button)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.board)
+        layout.addWidget(self.board, stretch=1)
         layout.addWidget(self.result_label)
         layout.addWidget(self.player_input)
         layout.addWidget(self.color_button)
