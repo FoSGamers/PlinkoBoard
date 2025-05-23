@@ -2,17 +2,37 @@ import sys
 import json
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QPushButton, QLabel,
-    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox, QColorDialog, QSizePolicy
+    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox, QColorDialog, QSizePolicy, QSpacerItem
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 from plinko_board import PlinkoBoard
+
+class AspectRatioWidget(QWidget):
+    def __init__(self, widget, aspect_ratio=9/16, parent=None):
+        super().__init__(parent)
+        self.widget = widget
+        self.aspect_ratio = aspect_ratio
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(widget)
+        self.setLayout(layout)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+    def resizeEvent(self, event):
+        w = self.width()
+        h = int(w / self.aspect_ratio)
+        if h > self.height():
+            h = self.height()
+            w = int(h * self.aspect_ratio)
+        self.widget.setFixedSize(w, h)
+        super().resizeEvent(event)
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("FoSGamers PlinkoBoard")
-        self.resize(800, 1100)
-        self.setMinimumSize(400, 600)
+        self.resize(720, 1280)
+        self.setMinimumSize(360, 640)
 
         self.reward_labels = [
             "+5 POGs", "+10 POGs", "Vault Key", "Whiskey", "Loot Crate",
@@ -20,7 +40,8 @@ class MainWindow(QMainWindow):
         ]
 
         self.board = PlinkoBoard(self.reward_labels, parent=self)
-        self.board.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.aspect_board = AspectRatioWidget(self.board, aspect_ratio=9/16)
+        self.aspect_board.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.result_label = QLabel("Drop a chip to play!")
         self.result_label.setAlignment(Qt.AlignCenter)
@@ -52,15 +73,22 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(self.save_button)
         button_layout.addWidget(self.load_button)
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.board, stretch=1)
-        layout.addWidget(self.result_label)
-        layout.addWidget(self.player_input)
-        layout.addWidget(self.color_button)
-        layout.addLayout(button_layout)
+        controls_layout = QVBoxLayout()
+        controls_layout.addWidget(self.result_label)
+        controls_layout.addWidget(self.player_input)
+        controls_layout.addWidget(self.color_button)
+        controls_layout.addLayout(button_layout)
+        controls_layout.setSpacing(10)
+        controls_layout.setContentsMargins(0, 0, 0, 0)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(self.aspect_board, stretch=2)
+        main_layout.addSpacing(10)
+        main_layout.addLayout(controls_layout, stretch=0)
+        main_layout.addStretch(1)
 
         container = QWidget()
-        container.setLayout(layout)
+        container.setLayout(main_layout)
         self.setCentralWidget(container)
 
     def handle_drop(self):
